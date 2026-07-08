@@ -44,18 +44,23 @@ exports.createQR = async (req, res) => {
 
         const qrPath = path.join(qrFolder, `${shortCode}.png`);
 
-        const qrURL = `http://localhost:3000/api/r/${shortCode}`;
+        // Base URL for Local / Render
+const baseURL = process.env.BASE_URL || "http://localhost:3000";
 
-        await QRCode.toFile(qrPath, qrURL);
+// QR Redirect URL
+const qrURL = `${baseURL}/api/r/${shortCode}`;
 
-        res.status(201).json({
-            success: true,
-            message: "QR Created Successfully",
-            short_code: shortCode,
-            qr_url: qrURL,
-            qr_image: `http://localhost:3000/qr/${shortCode}.png`,
-            data
-        });
+// Save QR Image
+await QRCode.toFile(qrPath, qrURL);
+
+res.status(201).json({
+    success: true,
+    message: "QR Created Successfully",
+    short_code: shortCode,
+    qr_url: qrURL,
+    qr_image: `${baseURL}/qr/${shortCode}.png`,
+    data
+});
 
     } catch (err) {
         console.error(err);
